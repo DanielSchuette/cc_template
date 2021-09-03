@@ -5,11 +5,13 @@ BUILD_DIR = build
 BIN_DIR   = bin
 BIN       = prog
 
+SHELL = /bin/bash
+
 # We specify globally applicable compiler options right here. They are exported
 # to all recursively called Makefiles.
 CC      = gcc
 CCFLAGS = -Werror -Wall -Wpedantic -Wextra -Wwrite-strings -Warray-bounds \
-	 	  -Weffc++ -fno_exceptions --std=c++20 -Og
+	 	  -Weffc++ -fno-exceptions --std=c++20 -Og
 LDFLAGS = -lm -dl -lstdc++
 
 # For release builds, set DEBUG to anything but "yes".
@@ -18,9 +20,29 @@ ifeq ($(DEBUG), yes)
 	CCFLAGS += -g -DNDEBUG
 endif
 
-.PHONY: all $(BIN) install test clean help debug leak_test
+.PHONY: all $(BIN) install test clean help debug leak_test check
 
-all: dirs $(BIN)
+all: check dirs $(BIN)
+
+# We are depending on a few programs being available on the user's system. This
+# function and the `check' target aren't strictly necessary, they just give
+# convenient error messages if a certain program isn't there. If we are never
+# actually using a certain target that requires such a program, we can simply
+# remove `check_for_prog' and the `check' target and get away with it.
+define check_for_prog
+	@if ! command -v $(1) >/dev/null 2>&1; then \
+		printf "%s \`%s' %s %s.\n" \
+			"The program" $(1) "isn't available, please install it or change" \
+			"the configuration (see our \`Makefile' at the specified line)";  \
+			exit 1; fi
+endef
+
+check:
+	$(call check_for_prog, $(SHELL))
+	$(call check_for_prog, $(CC))
+	$(call check_for_prog, ctags)
+	$(call check_for_prog, gdb)
+	$(call check_for_prog, valgrind)
 
 dirs: $(BUILD_DIR) $(BIN_DIR)
 
