@@ -9,15 +9,16 @@ BIN       = prog
 # to all recursively called Makefiles.
 CC      = gcc
 CCFLAGS = -Werror -Wall -Wpedantic -Wextra -Wwrite-strings -Warray-bounds \
-	 	  -Weffc++ --std=c++20 -Og
-LDFLAGS = -lm -lstdc++ -lSDL2 -static
+	 	  -Weffc++ -fno_exceptions --std=c++20 -Og
+LDFLAGS = -lm -dl -lstdc++
 
-DEBUG = no
+# For release builds, set DEBUG to anything but "yes".
+DEBUG = yes
 ifeq ($(DEBUG), yes)
 	CCFLAGS += -g -DNDEBUG
 endif
 
-.PHONY: all $(BIN) install test clean help
+.PHONY: all $(BIN) install test clean help debug leak_test
 
 all: dirs $(BIN)
 
@@ -39,6 +40,12 @@ install: all
 test: all
 	./$(BUILD_DIR)/$(BIN)
 
+debug: all
+	gdb ./$(BUILD_DIR)/$(BIN)
+
+leak_test: all
+	valgrind -s --leak-check=full ./$(BUILD_DIR)/$(BIN)
+
 # Since _all_ build artifacts are created in the build directory, we don't need
 # to recursively call any subdirectory's Makefile for cleanup. We check whether
 # the binary was installed in the base directory, because that might sometimes
@@ -54,4 +61,6 @@ help:
 	@printf " install:\tBuild and install \`%s' to \`%s'.\n" $(BIN) $(BIN_DIR)
 	@printf " test:\t\tBuild and execute \`%s'.\n" $(BIN)
 	@printf " clean:\t\tRemove all build artifacts.\n"
-	@printf "To enable debugging, supply the argument \`DEBUG=yes'.\n"
+	@printf " debug:\t\tCompile the program and enter gdb.\n"
+	@printf " leak_test:\tCompile the program and enter valgrind.\n"
+	@printf "To enable debugging, add the additional argument \`DEBUG=yes'.\n"
