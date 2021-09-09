@@ -33,7 +33,7 @@ define check_for_prog
 	@if ! command -v $(1) >/dev/null 2>&1; then \
 		printf "%s \`%s' %s %s.\n" \
 			"The program" $(1) "isn't available, please install it or change" \
-			"the configuration (see our \`Makefile' at the specified line)";  \
+			"the configuration (see main \`Makefile' at the specified line)"; \
 			exit 1; fi
 endef
 
