@@ -17,7 +17,7 @@ LDFLAGS = -lm -dl -lstdc++
 # For release builds, set DEBUG to anything but "yes".
 DEBUG = yes
 ifeq ($(DEBUG), yes)
-	CCFLAGS += -g -DNDEBUG
+	CCFLAGS += -g # to remove assertions, add -DNDEBUG
 endif
 
 .PHONY: all $(BIN) install test clean help debug leak_test check
