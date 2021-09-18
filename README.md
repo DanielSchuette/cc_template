@@ -29,11 +29,22 @@ Now, you should definitely change/update/remove the following files
 - anything in `src/*` since that's the place to put code you're writing
 - `src/common.hh` should be updated (or even removed), according to your needs
 - compiler and linker flags in the main [`Makefile`](./Makefile)
+- some targets in the main [`Makefile`](./Makefile), see comments below
 - you might want to delete `.git/` to initialize your own git repository
 
 Things should be fairly self-explanatory from here. Please consult the main
 `Makefile` and its comments for additional explanations of how compilation
 works.
+
+A small, last comment regarding some of the `Makefile` targets: I use a bunch
+of targets, that are very particular to my tooling, e.g. the `PERF` or `DEBUG`
+targets. To not forget to install the necessary dependencies on a new system,
+the `Makefile` validates their installation and displays an appropriate error
+message if e.g. `gdb` or `valgrind` are not available. You don't have to use
+those, of course. Just delete the line that generates the error message (and
+maybe the target, so that you don't get confused why it is there in 6 months
+from now). But let me say this: on a reasonable Linux distro, all those
+programs are just one package manager invocation away, anyways :)
 
 # License
 This project includes a [GPLv3](./LICENSE.md) license, but every user is

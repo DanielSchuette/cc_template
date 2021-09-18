@@ -21,9 +21,16 @@
  */
 #include "common.hh"
 
+void f(void)
+{
+    fprintf(stderr, "goodbye sample\n");
+    return;
+}
+
 int main(void)
 {
     fprintf(stderr, "hello sample\n");
+    f();
 
     return 0;
 }
