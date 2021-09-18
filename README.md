@@ -4,11 +4,12 @@ This repository is a template to start `C++` (and with little modification,
 when the user types
 
 ```bash
-make all # or
-make test # compilation & running the resulting binary, or
-make install # installs the binary target into the specified BIN_DIR
+make all     # to build the executable file, or
+make run     # to compile & run the executable file, or
+make install # to install that binary into the specified BIN_DIR, or
+make tests   # to create an archive of the library and run the test suite
 
-# To display a list of available make targets, run:
+# There are a few more targets. To display a list of all of them, run:
 make help
 ```
 
@@ -45,6 +46,24 @@ those, of course. Just delete the line that generates the error message (and
 maybe the target, so that you don't get confused why it is there in 6 months
 from now). But let me say this: on a reasonable Linux distro, all those
 programs are just one package manager invocation away, anyways :)
+
+# Incomplete Parts of the Template
+This template can be used to quickly get going with a `C++` (or after simple
+modifications, `C`) project. It anticipates the workflow I typically establish
+for most of my projects of a certain size, that's mainly:
+
+- recompiling source files that changed
+- running a binary target with specific command line options for testing
+- debugging and profiling the resulting binary
+- packaging object files into an archive
+- testing of classes/methods/functions in a library
+
+Currently, the last part is what's really lacking. The directory structure and
+`Makefile`s facilitate the development of a test suite under `tests`, but I _do
+not_ include a testing framework. Usually, I develop one according to specific
+project requirements. In the future, I might include a simple test runner in
+this repository, along with basic logging facilities and commonly used I/O
+functions. We'll see.
 
 # License
 This project includes a [GPLv3](./LICENSE.md) license, but every user is

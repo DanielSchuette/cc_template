@@ -19,20 +19,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-#include "common.hh"
-#include "samplelib.hh"
+#include "../src/common.hh"
+#include "../src/samplelib.hh"
 
-void f(void)
+void test_important_fn(void)
 {
-    fprintf(stderr, "goodbye sample\n");
-    return;
-}
-
-int main(void)
-{
-    fprintf(stderr, "hello sample\n");
-    f();
-    fprintf(stderr, "important_fn(%d, %d)=%d\n", 3, 8, important_fn(3, 8));
-
-    return 0;
+    // A dumb test.
+    assert(important_fn(7, 8) == 17);
+    fprintf(stderr, "Test passed!\n");
 }

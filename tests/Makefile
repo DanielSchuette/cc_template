@@ -24,26 +24,30 @@ SRCS = $(wildcard *.cc)
 OBJS = $(SRCS:.cc=.o)
 DEPS = $(SRCS:.cc=.d)
 
-# Since we create all build artifacts in a dedicated build directory, we must
-# reconstruct an absolute path for every object file and the resulting binary.
-# Also, for them to work, dependency files must be in the same directory as the
-# related object file.
+# We don't want to mix build artifacts that belong to our test suite with
+# object files that were generated when building the library or user program.
+# Thus, we keep everything in our test directory. That's why we have a CLEAN
+# target in here!
 BUILD_DIR_PATH = ../$(BUILD_DIR)
-BIN_PATH       = $(BUILD_DIR_PATH)/$(BIN)
-OBJS_PATH      = $(addprefix $(BUILD_DIR_PATH)/,$(OBJS))
-DEPS_PATH      = $(addprefix $(BUILD_DIR_PATH)/,$(DEPS))
+LIB_PATH       = $(BUILD_DIR_PATH)/$(LIB_NAME)
 
-.PHONY: all
+.PHONY: all clean
 
-all: $(BIN_PATH)
+# When running this Makefile, the main Makefile must ensure that an archive
+# exists at LIB_PATH which provides all the symbols that our test cases use.
+all: $(TESTS_BIN)
 
-# The resulting binary is created in the build directory. The main Makefile can
-# then go and place it wherever it might seem appropriate.
-$(BIN_PATH): $(OBJS_PATH)
-	$(CC) $(LDFLAGS) -o $@ $^
+# The resulting binary is also created in the tests directory. We need to make
+# sure that we list the library last, because we want the linker to include the
+# main function of our test suite, not that of our library (if it has one, that
+# is).
+$(TESTS_BIN): $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $^ $(LIB_PATH)
 
-# We create all object files directly in the build directory.
-$(OBJS_PATH): $(BUILD_DIR_PATH)/%.o: %.cc
+$(OBJS): %.o: %.cc
 	$(CC) $(CCFLAGS) -MMD -MP -c -o $@ $<
+
+clean:
+	rm -f *.o *.d $(TESTS_BIN)
 
 -include $(DEPS_PATH)

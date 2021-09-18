@@ -1,12 +1,36 @@
+# This is a template to start C/C++ projects from. You _are_ allowed to remove
+# this copyright notice, even though it says otherwise. That is because I use
+# this notice to copy it into every source file, but it _does not_ apply to
+# this sample project! If you see this copyright notice in any other context,
+# you're legally required to follow it, though. Beware!
+#
+# Sample Project Copyright (C) 2021 Daniel Schuette
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
 .DELETE_ON_ERROR:
 .EXPORT_ALL_VARIABLES:
-SRC_DIR      = src
-BUILD_DIR    = build
-BIN_DIR      = bin
-BIN          = prog
-BIN_FLAGS    = # here, we would provide command line arguments to BIN
-GPROF_OUTPUT = analysis.txt
-G2D_OUTPUT   = call_graph.pdf
+SRC_DIR         = src
+BUILD_DIR       = build
+BIN_DIR         = bin
+TESTS_DIR       = tests
+BIN             = prog
+TESTS_BIN       = test_suite
+BIN_FLAGS       = # here, we would provide command line arguments to BIN
+TESTS_BIN_FLAGS = # here, we would provide command line arguments to TEST_BIN
+LIB_NAME        = libsample.a
+GPROF_OUTPUT    = analysis.txt
+G2D_OUTPUT      = call_graph.pdf
 
 SHELL = /bin/bash
 
@@ -25,10 +49,6 @@ ifeq ($(DEBUG), yes)
 	LDFLAGS += -ggdb -pg
 endif
 
-.PHONY: all $(BIN) install test clean help debug leak_test check prof
-
-all: check dirs $(BIN)
-
 # We are depending on a few programs being available on the user's system. This
 # function and the `check' target aren't strictly necessary, they just give
 # convenient error messages if a certain program isn't there. If we are never
@@ -41,6 +61,11 @@ define check_for_prog
 			"the configuration (see main \`Makefile' at the specified line)"; \
 			exit 1; fi
 endef
+
+.PHONY: all $(BIN) install run tests archive \
+		clean help debug leak_test check prof
+
+all: check dirs $(BIN)
 
 check:
 	$(call check_for_prog, $(SHELL))
@@ -67,8 +92,16 @@ $(BIN):
 install: all
 	cp $(BUILD_DIR)/$(BIN) $(BIN_DIR)
 
-test: all
+run: all
 	./$(BUILD_DIR)/$(BIN) $(BIN_FLAGS)
+
+archive: all
+	ar rcs $(BUILD_DIR)/$(LIB_NAME) $(BUILD_DIR)/*.o
+
+# @NOTE: imcomplete!
+tests: archive
+	cd $(TESTS_DIR) && $(MAKE)
+	./$(TESTS_DIR)/$(TESTS_BIN) $(TESTS_BIN_FLAGS)
 
 # @NOTE: Targets DEBUG, LEAK_TEST and PROF require debugging information to
 # work correctly. Thus, DEBUG=yes is required.
@@ -91,12 +124,15 @@ clean:
 	rm -f tags gmon.out $(GPROF_OUTPUT) $(G2D_OUTPUT)
 	rm -rf $(BUILD_DIR)
 	[[ '$(BIN_DIR)' != '.' ]] && rm -rf $(BIN_DIR) || rm -f $(BIN)
+	cd $(TESTS_DIR) && $(MAKE) clean
 
 help:
 	@printf "The following targets are available:\n"
 	@printf " all:\t\tBuild \`%s'.\n" $(BIN)
 	@printf " install:\tBuild and install \`%s' to \`%s'.\n" $(BIN) $(BIN_DIR)
-	@printf " test:\t\tBuild and execute \`%s'.\n" $(BIN)
+	@printf " run:\t\tBuild and execute \`%s'.\n" $(BIN)
+	@printf " tests:\t\tBuild and execute the test suite.\n"
+	@printf " archive:\tBuild \`%s'.\n" $(LIB_NAME)
 	@printf " clean:\t\tRemove all build artifacts.\n"
 	@printf " debug:\t\tCompile the program and enter gdb.\n"
 	@printf " leak_test:\tCompile the program and enter valgrind.\n"
