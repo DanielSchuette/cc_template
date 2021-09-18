@@ -20,7 +20,7 @@ all: $(BIN_PATH)
 # The resulting binary is created in the build directory. The main Makefile can
 # then go and place it wherever it might seem appropriate.
 $(BIN_PATH): $(OBJS_PATH)
-	$(CC) -o $@ $^ $(LDFLAGS)
+	$(CC) $(LDFLAGS) -o $@ $^
 
 # We create all object files directly in the build directory.
 $(OBJS_PATH): $(BUILD_DIR_PATH)/%.o: %.cc
