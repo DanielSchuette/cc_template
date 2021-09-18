@@ -27,7 +27,8 @@ git clone https://github.com/DanielSchuette/cc_template.git <your_proj_name>
 
 Now, you should definitely change/update/remove the following files
 - this [README.md](./README.md) file
-- anything in `src/*` since that's the place to put code you're writing
+- everything in `src/*` since that's the place to put code you're writing
+- everything in `tests/*` since that's the place to put tests you're writing
 - `src/common.hh` should be updated (or even removed), according to your needs
 - compiler and linker flags in the main [`Makefile`](./Makefile)
 - some targets in the main [`Makefile`](./Makefile), see comments below
@@ -43,14 +44,14 @@ targets. To not forget to install the necessary dependencies on a new system,
 the `Makefile` validates their installation and displays an appropriate error
 message if e.g. `gdb` or `valgrind` are not available. You don't have to use
 those, of course. Just delete the line that generates the error message (and
-maybe the target, so that you don't get confused why it is there in 6 months
-from now). But let me say this: on a reasonable Linux distro, all those
+maybe the target, so that you don't get confused why it is there at all in 6
+months from now). But let me say this: on a reasonable Linux distro, all those
 programs are just one package manager invocation away, anyways :)
 
-# Incomplete Parts of the Template
-This template can be used to quickly get going with a `C++` (or after simple
+# Complete & Incomplete Parts of the Template
+This template can be used to quickly get going with a `C++` (or, after simple
 modifications, `C`) project. It anticipates the workflow I typically establish
-for most of my projects of a certain size, that's mainly:
+for most of my projects of a certain size. The most important parts are:
 
 - recompiling source files that changed
 - running a binary target with specific command line options for testing
@@ -58,12 +59,12 @@ for most of my projects of a certain size, that's mainly:
 - packaging object files into an archive
 - testing of classes/methods/functions in a library
 
-Currently, the last part is what's really lacking. The directory structure and
-`Makefile`s facilitate the development of a test suite under `tests`, but I _do
-not_ include a testing framework. Usually, I develop one according to specific
-project requirements. In the future, I might include a simple test runner in
-this repository, along with basic logging facilities and commonly used I/O
-functions. We'll see.
+Currently, the last part is what's really lacking good support. The directory
+structure and `Makefile`s facilitate the development of a test suite in the
+`tests` directory, but I _do not_ include a testing framework. Usually, I
+develop one according to the specific requirements of a certain project. In the
+future though, I might include a simple test runner in this repository, along
+with basic logging facilities and commonly used I/O functions. We'll see.
 
 # License
 This project includes a [GPLv3](./LICENSE.md) license, but every user is
